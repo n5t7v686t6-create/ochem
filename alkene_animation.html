@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alkene Mechanisms, Step by Step</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050505;--green:#5ad13b;--red:#e04848;--blue:#1f3fe0;--grey:#c3c3c3;--ink:#f4f4f4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*:before,*:after{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'VT323','Courier New',monospace;font-size:22px;line-height:1.25;min-height:100vh;padding:20px 14px 40px}
+.wrap{max-width:680px;margin:0 auto}
+h1{font-family:'Silkscreen','Courier New',monospace;color:var(--green);font-size:clamp(24px,6.5vw,40px);line-height:1.05;margin:0 0 6px}
+h1 span{font-family:'Pinyon Script',cursive;font-size:1.9em;font-weight:400;vertical-align:-.12em;margin-right:4px}
+.sub{color:var(--grey);margin:0 0 16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab,.pill{font-family:'Silkscreen',monospace;font-size:12px;color:#fff;background:#333;border:0;border-radius:999px;padding:12px 16px;cursor:pointer;min-height:44px}
+.tab[aria-pressed=true],.pill{background:linear-gradient(#4a68ff,var(--blue))}
+.tab:focus-visible,.pill:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.win{background:var(--grey);border:3px solid #fff;border-right-color:#6b6b6b;border-bottom-color:#6b6b6b;color:#111}
+.bar{background:linear-gradient(90deg,#1b2fb8,#7a3fd1);color:#fff;font-family:'Silkscreen',monospace;font-size:13px;padding:5px 8px;display:flex;justify-content:space-between}
+svg{display:block;width:100%;height:auto;background:#0a0a0a;font-family:'VT323','Courier New',monospace}
+text{paint-order:stroke;stroke:#0a0a0a;stroke-width:7px;text-anchor:middle;font-size:24px}
+.n{animation:pop .6s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.bubble{background:var(--red);color:#fff;border-radius:14px;padding:12px 16px;margin:16px 0 12px;font-size:24px}
+.facts{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;padding:0;list-style:none}
+.facts li{background:#111;border:2px solid var(--green);color:var(--green);padding:2px 10px;font-size:20px}
+.ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ctl .pill:disabled{opacity:.4;cursor:default}
+#st{color:var(--grey)}
+@media (prefers-reduced-motion:reduce){.n{animation:none}}
+</style></head>
+<body><div class="wrap">
+<h1><span>A</span>lkene Moves</h1>
+<p class="sub">Pick a reaction, then step through it. Green = new this step.</p>
+<div class="tabs" id="tabs"></div>
+<div class="win"><div class="bar"><span id="ttl">mechanism.exe</span><span id="st"></span></div>
+<svg id="svg" viewBox="0 0 360 300" role="img" aria-label="Reaction mechanism diagram"></svg></div>
+<div class="bubble" id="cap"></div>
+<ul class="facts" id="facts"></ul>
+<div class="ctl"><button class="pill" id="prev">Back</button><button class="pill" id="next">Next</button><button class="pill" id="play">Auto play</button></div>
+</div>
+<script>
+const W='#f4f4f4',G='#5ad13b',R='#ff6b6b',B='#6f8cff';
+const T=(x,y,s,c=W,n=0)=>`<text x="${x}" y="${y}" fill="${c}" class="${n?'n':''}">${s}</text>`;
+const L=(a,b,c,d,col=W,n=0,dash=0)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${col}" stroke-width="3" ${dash?'stroke-dasharray="6 5"':''} class="${n?'n':''}"/>`;
+const P=(d,col=G,n=1)=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="3" marker-end="url(#ah)" class="${n?'n':''}"/>`;
+const defs=`<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0L8,4L0,8z" fill="#5ad13b"/></marker></defs>`;
+// hydrohalogenation skeleton: C1(60,200) C2(140,150) C3(220,200) Me1(220,270) Me2(300,150)
+const hk=(dbl,n1)=>L(60,200,140,150)+(dbl?L(60,210,140,160,G,n1):'')+L(140,150,220,200)+L(220,200,220,262)+L(220,200,300,160);
+const hl=(a,b,c,d,col=[W,W,W,W,W])=>T(60,214,a,col[0])+T(140,142,b,col[1])+T(220,222,c,col[2])+T(220,285,'CH₃')+T(300,152,'CH₃');
+// two-carbon skeleton: Ca(130,150) Cb(230,150)
+const ab=(dbl,n=0)=>L(130,150,230,150)+(dbl?L(130,160,230,160,G,n):'');
+const SF=L(70,262,290,262,'#888',1)+T(180,290,'Pd surface','#888',1);
+const RR=T(130,185,'R')+T(230,185,'R')+T(130,125,'R')+T(230,125,'R');
+const MS=T(130,185,'R')+T(130,125,'R')+T(230,185,'H')+T(230,125,'H');
+const MP=T(90,185,'R')+T(90,125,'R')+T(270,185,'H')+T(270,125,'H');
+const RX={
+hh:{name:'HCl addition',facts:['Markovnikov','Rearranges','Syn + anti'],steps:[
+ ['Alkene + HCl. The π bond is weak, so it is the part that reacts.',hk(1,1)+hl('CH₂','CH','CH')+T(300,50,'H–Cl',B,1)+P('M100 170 Q230 110 285 52')],
+ ['π electrons grab H. H goes to the carbon with more H’s, leaving a 2° carbocation.',hk(0)+hl('CH₃','CH⁺','CH',[G,R,W])+T(300,50,'Cl⁻',B,1)+T(60,250,'H added',G,1)],
+ ['Rearrangement: a hydride shifts from the next carbon, aiming for a more stable cation.',hk(0)+hl('CH₃','CH⁺','CH')+T(190,120,'H',G,1)+P('M180 112 Q155 90 140 122')+T(300,50,'Cl⁻',B)],
+ ['Now the cation sits on a 3° carbon. Cl⁻ attacks it.',hk(0)+hl('CH₃','CH₂','C⁺',[W,G,R])+T(300,245,'Cl⁻',B)+P('M285 232 Q260 215 240 208')],
+ ['Product is the rearranged 2-chloro-2-methylbutane, not the 2° chloride.',hk(0)+hl('CH₃','CH₂','C')+L(220,200,160,245,W,1)+T(150,265,'Cl',G,1)]]},
+hx:{name:'Br₂ addition',facts:['Anti','No rearrangement','Bromonium ring'],steps:[
+ ['Alkene + Br₂. The electrons attack Br–Br, which gets polarised as it approaches.',ab(1)+T(130,185,'R')+T(230,185,'R')+T(130,125,'H')+T(230,125,'H')+T(180,50,'Br–Br',B,1)+P('M180 140 Q180 100 180 62')],
+ ['A bromonium ring forms: Br bridges both carbons, so nothing can rotate or shift.',ab(0)+L(130,150,180,100,G,1)+L(230,150,180,100,G,1)+T(180,88,'Br⁺',R,1)+T(180,260,'Br⁻',B,1)+T(130,185,'R')+T(230,185,'R')],
+ ['Br⁻ must attack from the opposite side of the ring. This is why the result is anti.',ab(0)+L(130,150,180,100)+L(230,150,180,100,R,0,1)+T(180,88,'Br⁺',R)+T(180,260,'Br⁻',B)+P('M185 240 Q220 215 228 165')],
+ ['Anti product: one Br up, one Br down.',ab(0)+L(130,150,130,100,W,1)+T(130,88,'Br',G,1)+L(230,150,230,200,W,1)+T(230,225,'Br',G,1)+T(130,185,'R')+T(230,125,'H')+T(90,125,'H')+T(270,185,'R')]]},
+hb:{name:'Hydroboration',facts:['Syn','Anti-Markovnikov','No rearrangement'],steps:[
+ ['Alkene + BH₃ (in THF). Boron is electron hungry and has an empty orbital.',ab(1)+T(130,185,'CH₃')+T(130,130,'CH')+T(230,130,'CH₂')+T(180,50,'BH₃',B,1)],
+ ['One concerted step: B goes to the less crowded carbon, H to the other, on the same face.',ab(0)+L(130,150,130,90,G,1,1)+L(230,150,230,90,G,1,1)+T(130,80,'H',G,1)+T(230,80,'BH₂',G,1)+T(130,185,'CH₃')+T(130,135,'CH',W)+T(230,135,'CH₂',W)+T(180,40,'syn',R,1)],
+ ['Alkylborane formed with no carbocation, so nothing rearranges. Next: H₂O₂, NaOH.',ab(0)+L(130,150,130,100)+L(230,150,230,100)+T(130,90,'H',W)+T(230,90,'BH₂',W)+T(130,185,'CH₃')+T(180,260,'H₂O₂ / NaOH',B,1)],
+ ['OH replaces B on the same carbon and same face. Net result: syn, anti-Markovnikov alcohol.',ab(0)+L(130,150,130,100)+L(230,150,230,100)+T(130,90,'H')+T(230,90,'OH',G,1)+T(130,185,'CH₃')+T(180,260,'1-propanol',R,1)]]},
+hg:{name:'Hydrogenation',facts:['Syn only','No rearrangement','Needs catalyst'],steps:[
+ ['Alkene + H₂ meet on a metal catalyst (Pd, Pt or Ni). The metal surface holds both.',ab(1)+RR+SF+T(180,235,'H–H',B,1)],
+ ['H–H splits into two H atoms stuck to the metal.',ab(1)+RR+SF+T(130,235,'H',G,1)+T(230,235,'H',G,1)],
+ ['Both H atoms transfer to the same face of C=C: syn addition. No carbocation, so no rearrangement.',ab(0)+RR+SF+L(130,150,130,205,W,1)+L(230,150,230,205,W,1)+T(130,228,'H',G,1)+T(230,228,'H',G,1)+T(180,70,'alkane',R,1)]]},
+hy:{name:'Halohydrin',facts:['Anti','No rearrangement','OH to more substituted C'],steps:[
+ ['Alkene + Br₂ in water. Same start as halogenation.',ab(1)+MS+T(180,50,'Br–Br',B,1)+P('M180 140 Q180 100 180 62')],
+ ['Bromonium ring forms. Water is the solvent, so it is the nearby nucleophile now, not Br⁻.',ab(0)+MS+L(130,150,180,100,G,1)+L(230,150,180,100,G,1)+T(180,88,'Br⁺',R,1)+T(180,260,'H₂O',B,1)],
+ ['H₂O attacks the more substituted carbon (more positive charge) from the opposite side.',ab(0)+MS+L(130,150,180,100,R,0,1)+L(230,150,180,100)+T(180,88,'Br⁺',R)+T(180,260,'H₂O',B)+P('M165 242 Q135 215 128 165')],
+ ['Anti product: OH on the more substituted carbon, Br on the other. With ROH you get OR instead of OH.',ab(0)+MP+L(230,150,230,100,W,1)+T(230,88,'Br',G,1)+L(130,150,130,200,W,1)+T(130,225,'OH',G,1)]]},
+om:{name:'Oxymercuration',facts:['Markovnikov','Anti','No rearrangement'],steps:[
+ ['Alkene + Hg(OAc)₂ in water (step 1: oxymercuration).',ab(1)+MS+T(180,50,'Hg(OAc)₂',B,1)+P('M180 140 Q180 100 180 62')],
+ ['A mercurinium ring forms, like the bromonium ion. No free carbocation, so no rearrangement.',ab(0)+MS+L(130,150,180,100,G,1)+L(230,150,180,100,G,1)+T(180,88,'Hg⁺',R,1)+T(180,260,'H₂O',B,1)],
+ ['H₂O attacks the more substituted carbon from the opposite side of Hg.',ab(0)+MS+L(130,150,180,100,R,0,1)+L(230,150,180,100)+T(180,88,'Hg⁺',R)+T(180,260,'H₂O',B)+P('M165 242 Q135 215 128 165')],
+ ['After losing H⁺: OH on the more substituted carbon, Hg on the other.',ab(0)+MP+L(230,150,230,100,W,1)+T(230,88,'HgOAc',G,1)+L(130,150,130,200,W,1)+T(130,225,'OH',G,1)],
+ ['Step 2, demercuration with NaBH₄: Hg is replaced by H. Markovnikov alcohol.',ab(0)+MP+L(230,150,230,100)+T(230,88,'H',G,1)+L(130,150,130,200)+T(130,225,'OH')+T(180,270,'NaBH₄',B,1)]]}
+};
+RX.hd={name:'Hydration',facts:['Markovnikov','Rearranges','Syn + anti'],steps:RX.hh.steps.map((t,k)=>[['Alkene + H₂O with H₂SO₄ as acid catalyst. The π bond reacts.','H⁺ from the acid adds to the carbon with more H’s, leaving a 2° carbocation.','Rearrangement: a hydride shifts to give the more stable cation.','H₂O attacks the 3° cation from either face (syn + anti).','Lose H⁺ and you have the rearranged 3° alcohol.'][k],t[1].replace(/Cl⁻/g,'H₂O').replace('>H–Cl<','>H₃O⁺<').replace('>Cl<','>OH<')])};
+let cur='hh',s=0,timer=null;
+const $=id=>document.getElementById(id);
+const tabs=$('tabs');
+Object.keys(RX).forEach(k=>{const b=document.createElement('button');b.className='tab';b.textContent=RX[k].name;b.onclick=()=>{stop();cur=k;s=0;draw()};b.dataset.k=k;tabs.appendChild(b)});
+function draw(){
+  const r=RX[cur],st=r.steps[s];
+  $('svg').innerHTML=defs+st[1];
+  $('cap').textContent=st[0];
+  $('st').textContent='step '+(s+1)+'/'+r.steps.length;
+  $('ttl').textContent=r.name+'.exe';
+  $('facts').innerHTML=r.facts.map(f=>'<li>'+f+'</li>').join('');
+  $('prev').disabled=s===0;$('next').disabled=s===r.steps.length-1;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-pressed',t.dataset.k===cur));
+}
+function stop(){clearInterval(timer);timer=null;$('play').textContent='Auto play'}
+$('prev').onclick=()=>{stop();if(s>0){s--;draw()}};
+$('next').onclick=()=>{stop();if(s<RX[cur].steps.length-1){s++;draw()}};
+$('play').onclick=()=>{
+  if(timer){stop();return}
+  if(s===RX[cur].steps.length-1)s=0;draw();
+  $('play').textContent='Pause';
+  timer=setInterval(()=>{if(s<RX[cur].steps.length-1){s++;draw()}else stop()},3000);
+};
+draw();
+</script></body></html>

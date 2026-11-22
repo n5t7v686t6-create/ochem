@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alkene Reactions Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050505;--green:#5ad13b;--red:#e04848;--blue:#1f3fe0;--grey:#c3c3c3;--ink:#f4f4f4;--ok:#5ad13b;--no:#ff6b6b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*:before,*:after{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'VT323','Courier New',monospace;font-size:22px;line-height:1.25;min-height:100vh;padding:20px 14px 40px}
+.wrap{max-width:640px;margin:0 auto}
+h1{font-family:'Silkscreen','Courier New',monospace;color:var(--green);font-size:clamp(26px,7vw,42px);line-height:1.05;margin:0 0 6px;letter-spacing:1px}
+h1 span{font-family:'Pinyon Script',cursive;font-size:1.9em;font-weight:400;vertical-align:-.12em;margin-right:4px}
+.sub{color:var(--grey);margin:0 0 18px}
+.win{background:var(--grey);border:3px solid #fff;border-right-color:#6b6b6b;border-bottom-color:#6b6b6b;color:#111}
+.bar{background:linear-gradient(90deg,#1b2fb8,#7a3fd1);color:#fff;font-family:'Silkscreen',monospace;font-size:13px;padding:5px 8px;display:flex;justify-content:space-between}
+.body{padding:16px}
+.bubble{background:var(--red);color:#fff;border-radius:14px;padding:14px 16px;position:relative;margin-bottom:18px;font-size:24px}
+.bubble:after{content:"";position:absolute;left:28px;bottom:-14px;border:10px solid transparent;border-top-color:var(--red);border-bottom:0;border-left-width:4px;border-right-width:18px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:#111;background:#e9e9e9;border:3px solid #fff;border-right-color:#777;border-bottom-color:#777;padding:10px 12px;margin:0 0 10px;cursor:pointer;min-height:48px}
+.opt:hover:not(:disabled){background:#fff}
+.opt:focus-visible,.pill:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.opt.ok{background:#b8f2a8;border-color:#2c8f12}
+.opt.no{background:#ffc3c3;border-color:#b52c2c}
+.opt:disabled{cursor:default}
+.fb{background:#111;color:var(--ink);padding:10px 12px;margin:6px 0 12px;border-left:5px solid var(--green)}
+.fb.bad{border-color:var(--no)}
+.pill{font-family:'Silkscreen',monospace;font-size:14px;color:#fff;background:linear-gradient(#4a68ff,var(--blue));border:0;border-radius:999px;padding:12px 26px;cursor:pointer;min-height:48px}
+.meter{height:14px;background:#111;border:2px solid #fff;margin-bottom:14px}
+.meter i{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
+.big{font-family:'Silkscreen',monospace;color:var(--green);font-size:48px;margin:6px 0}
+.hide{display:none}
+@media (prefers-reduced-motion:reduce){.meter i{transition:none}}
+</style></head>
+<body><div class="wrap">
+<h1><span>A</span>lkene Quiz</h1>
+<p class="sub">Week 7 · 10 questions · tap an answer, read why</p>
+<div class="win"><div class="bar"><span>quiz.exe</span><span id="count">1/10</span></div>
+<div class="body" id="app"></div></div>
+</div>
+<script>
+// first option in each list is the correct one; options are shuffled on screen
+const Q=[
+{q:"Which bond breaks first when an alkene reacts?",o:["The weaker π bond","The stronger σ bond","Both break equally","The C–H bond"],e:"The π bond is weaker than the σ bond. It breaks to form two new σ bonds."},
+{q:"Catalytic hydrogenation (H₂, Pd/Pt/Ni) adds the two H atoms…",o:["Syn (same side)","Anti (opposite sides)","Half syn, half anti","Only to the more substituted carbon"],e:"Both H atoms are delivered from the catalyst surface, so addition is syn only. No carbocation, so no rearrangement."},
+{q:"Which reaction does NOT go through a carbocation rearrangement?",o:["Oxymercuration–demercuration","Hydration (H₂O, H₂SO₄)","HCl addition","HBr addition without peroxide"],e:"The mercurinium ion in oxymercuration does not rearrange. The other three have a free carbocation."},
+{q:"HBr + ROOR (peroxide) on propene gives mainly…",o:["1-bromopropane (anti-Markovnikov)","2-bromopropane (Markovnikov)","1,2-dibromopropane","Propan-2-ol"],e:"Peroxide switches the mechanism to radical, so Br ends up on the less substituted carbon: anti-Markovnikov."},
+{q:"Br₂ adds to an alkene through a bromonium ring. The two Br atoms end up…",o:["Anti (opposite faces)","Syn (same face)","On the same carbon","Both on the more substituted carbon"],e:"Br⁻ must attack from the side opposite the ring, so addition is anti. No rearrangement."},
+{q:"Alkene + Br₂ in H₂O gives a halohydrin. Where does the OH go?",o:["The more substituted carbon","The less substituted carbon","Either, 50/50","Both carbons"],e:"Water attacks the bromonium ion at the carbon that holds more positive charge, the more substituted one. Br stays on the other carbon, and addition is anti."},
+{q:"Br₂ in CH₃OH (instead of water) gives…",o:["A bromo ether (Br + OCH₃)","A bromo alcohol (Br + OH)","A dibromide only","An alkane"],e:"Same mechanism as the halohydrin, but the nucleophile is ROH, so you get OR instead of OH."},
+{q:"You want a Markovnikov alcohol with no rearrangement. Best choice?",o:["Hg(OAc)₂, H₂O then NaBH₄","H₂O, H₂SO₄","BH₃·THF then H₂O₂, NaOH","H₂, Pd"],e:"Oxymercuration–demercuration puts OH on the more substituted carbon without a free carbocation."},
+{q:"Hydroboration–oxidation of an alkene gives an alcohol that is…",o:["Syn addition, anti-Markovnikov, no rearrangement","Anti addition, Markovnikov","Syn addition, Markovnikov","Anti addition, anti-Markovnikov"],e:"BH₃ adds in one concerted step: B to the less substituted carbon, H to the same face. H₂O₂/NaOH swaps B for OH with retention."},
+{q:"Why can acid-catalyzed hydration give rearranged products?",o:["It forms a carbocation intermediate","It forms a bromonium ion","It is a concerted reaction","It uses a radical chain"],e:"Protonating the alkene makes a carbocation, which can shift (hydride or methyl) to a more stable one before water attacks."}
+];
+let i=0,score=0;const app=document.getElementById('app'),cnt=document.getElementById('count');
+const shuf=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+function show(){
+  const d=Q[i];cnt.textContent=(i+1)+"/"+Q.length;
+  const opts=shuf(d.o.map((t,k)=>({t,right:k===0})));
+  app.innerHTML='<div class="meter"><i style="width:'+(i/Q.length*100)+'%"></i></div><div class="bubble"></div><div id="opts"></div><div id="fb" class="hide"></div><button class="pill hide" id="next"></button>';
+  app.querySelector('.bubble').textContent=d.q;
+  const box=document.getElementById('opts');
+  opts.forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.t;b.onclick=()=>pick(b,o,opts);b.dataset.r=o.right?1:0;box.appendChild(b)});
+}
+function pick(btn,o,opts){
+  const all=[...document.querySelectorAll('.opt')];
+  all.forEach(b=>{b.disabled=true;if(b.dataset.r==="1")b.classList.add('ok')});
+  if(o.right)score++;else btn.classList.add('no');
+  const fb=document.getElementById('fb');fb.className='fb'+(o.right?'':' bad');
+  fb.textContent=(o.right?'Correct. ':'Not quite. ')+Q[i].e;
+  const n=document.getElementById('next');n.classList.remove('hide');n.textContent=i<Q.length-1?'Next':'See score';
+  n.onclick=()=>{i++;i<Q.length?show():end()};n.focus();
+}
+function end(){
+  cnt.textContent="done";
+  const m=score>=9?"Ready for the exam.":score>=6?"Solid. Review the ones you missed.":"Reread your notes, then retry.";
+  app.innerHTML='<div class="meter"><i style="width:100%"></i></div><div class="bubble">'+m+'</div><div class="big">'+score+' / '+Q.length+'</div><p>Tip: for every miss, say aloud the three facts: Markovnikov? Syn or anti? Rearrangement?</p><button class="pill" id="again">Try again</button>';
+  document.getElementById('again').onclick=()=>{i=0;score=0;show()};
+}
+show();
+</script></body></html>
